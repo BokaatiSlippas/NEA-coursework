@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 	include("connection.php");
@@ -11,23 +12,37 @@ session_start();
 		//something was posted
 		$user_name = $_POST['user_name'];
 		$password = $_POST['password'];
-		$email = $_POST['email'];
 
-		if(!empty($user_name) && !empty($password) && !empty($email) && !is_numeric($user_name) && !is_numeric($email))
+		if(!empty($user_name) && !empty($password) && !is_numeric($user_name))
 		{
 
-			//save to database
-			$user_id = random_num(20);
-			$query = "insert into users (user_id,user_name,password,email) values ('$user_id','$user_name','$password','$email')";
+			//read from database
+			$query = "select * from users where user_name = '$user_name' limit 1";
 
-			mysqli_query($con, $query);
+			$result = mysqli_query($con, $query);
 
-			header("Location: login.php");
-			die;
+			if($result)
+			{
+				if($result && mysqli_num_rows($result) > 0)
+				{
+
+					$user_data = mysqli_fetch_assoc($result);
+					
+					if($user_data['password'] === $password)
+					{
+
+						$_SESSION['user_id'] = $user_data['user_id'];
+						header("Location: index.php");
+						die;
+					}
+				}
+			}
+			
+			echo "Wrong username or password";
 		}else
 		{
 
-			echo "Please enter some valid information";
+			echo "Wrong username or password";
 		}
 	}
 ?>
@@ -35,14 +50,14 @@ session_start();
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Signup</title>
+	<title>Personal Details</title>
 	<link rel="stylesheet" href="signup_style.css">
 </head>
 <body>
 	<div class="box" id="box">
 		<span class="borderLine"></span>
 		<form method="post" action="validate_email.php">
-			<div style="font-size: 20px;margin: 10px;color: white">Signup</div>
+			<div style="font-size: 20px;margin: 10px;color: white">Personal settings</div>
 			<div class="inputBox">
 				<input id="text" type="text" name="user_name" required="required">
 				<span>Username</span>

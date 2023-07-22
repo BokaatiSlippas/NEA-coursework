@@ -71,6 +71,7 @@ session_start();
 			<br><br>
 			<div class="links">
 				<a href="signup.php">Click to Signup</a>
+				<a href="forgot_password.php" class="float-end">Forgot Password</a>
 			</div>
 			<br><br>
 			<input id="button" type="submit" value="Login">
